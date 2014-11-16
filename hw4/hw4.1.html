@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<style>
+
+body{
+	font-family: Times;
+}
+
+h1{
+  font-size: 20pt;
+  position: relative;
+  left: 350px;
+  color: #1D4E07;
+}
+
+.title{
+  font-size: 14pt;
+  position: relative;
+  left: 160px;
+  color: #2E2EFE;
+}
+
+.text {
+	width: 800px;
+	position: relative;
+	left: 60px;
+	font-size: 16px;
+}
+
+</style>
+
+<body>
+<div>
+<h1> HW4 Ruowei Yang </h1>
+</div>
+
+<div class='text'>
+<p> 
+<ol>
+	<li>I am planing on making a grouped bar plot. X axis shows questions, y axis shows percentage and data grouped by answers. I hope to add mouseover fact which shows the exact number when moving the mouse to the bar. Following is the graph I made using R.</li>
+<img src="Rplot.png" style="width:700px;height:350px">
+<li> The data is about respondents' attitude towards how strong would they support or oppose the role of women in several positions. They data contains the questions, answers and the percentage of respondents have the certain answer grouped by questions.</li>
+<li> The data is stored in csv file.</li>
+<li> d3.csv(data.csv, function(error, data){})
+<li> JS Steps
+<ul style="list-style-type:disc">
+  <li>create svg canvas which will be used to draw the plot</li>
+  <li>map and set domain for the x and y variable from the dataset</li>
+  <li>create variable question and answer for separate and group data</li>
+  <li>draw bars corresponding for each data value</li>
+  <li>add color and other styling element</li>
+</ul>
+</li>
+</p>
+
+</div>
+
+<div>
+<p class="title"> How strong would you support or oppose the role of women in the following positions?</p>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script>
+
+var margin = {top: 40, right: 90, bottom: 120, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x0 = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var x1 = d3.scale.ordinal();
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.ordinal()
+    .range(["#F7FE2E", "#DBA901", "#A5DF00", "#3ADF00", "#01DFD7", "#0174DF"]);
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+
+d3.csv("data.csv", function(error, data) {
+  var answer = d3.keys(data[0]).filter(function(key) { return key !== "question"; });
+
+  data.forEach(function(d) {
+    d.answers = answer.map(function(name) { return {name: name, value: +d[name]}; });
+  });
+
+  x0.domain(data.map(function(d) { return d.question; }));
+  x1.domain(answer).rangeRoundBands([0, x0.rangeBand()]);
+  y.domain([0, d3.max(data, function(d) { return d3.max(d.answers, function(d) { return d.value; }); })]);
+      
+
+  var question = svg.selectAll(".question")
+      .data(data)
+    .enter().append("g")
+      .attr("class", "g")
+      .attr("transform", function(d) { return "translate(" + x0(d.question) + ",0)"; });
+
+  question.selectAll("rect")
+      .data(function(d) { return d.answers; })
+    .enter().append("rect")
+      .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x1(d.name); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .style("fill", function(d) { return color(d.name); });
+     var legend = svg.selectAll(".legend")
+      .data(answer.slice().reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+});
+
+</script>
+</div>
+
+</body>

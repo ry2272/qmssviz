@@ -1,0 +1,24 @@
+body{
+	font-family: Times;
+}
+
+h1{
+  font-size: 20pt;
+  position: relative;
+  left: 350px;
+  color: #1D4E07;
+}
+
+.title{
+  font-size: 14pt;
+  position: relative;
+  left: 160px;
+  color: #2E2EFE;
+}
+
+.text {
+	width: 800px;
+	position: relative;
+	left: 60px;
+	font-size: 16px;
+}
